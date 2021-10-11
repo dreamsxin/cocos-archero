@@ -3,6 +3,9 @@ import { CSVManager } from "./csvManager";
 import { resourceUtil } from "./resourceUtil";
 const { ccclass, property } = _decorator;
 
+/**
+ * @description 将所有csv文件加载到这里，提供查询的接口
+ */
 @ccclass("localConfig")
 export class localConfig {
     /* class member could be defined like this */
@@ -33,11 +36,12 @@ export class localConfig {
 
     private _loadCSV () {
         //新增数据表 请往该数组中添加....
+        //读取datas文件夹下的所有csv文件
         resources.loadDir("datas", (err: any, assets)=>{
             if (err) {
                 return;
             }
-
+            //返回满足回调函数中指定条件的数组元素。
             let arrCsvFiles = assets.filter((item: any)=>{
                 return item._native !== ".md";
             })
@@ -47,6 +51,7 @@ export class localConfig {
             //客户端加载
             if (arrCsvFiles.length) {
                 arrCsvFiles.forEach((item, index, array)=> {
+                    //通过文件的文件名字获取对应的文本数据
                     resourceUtil.getTextData(item.name, (err: any, content: any) => {
                         this._csvManager.addTable(item.name, content);
                         this._tryToCallbackOnFinished();

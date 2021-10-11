@@ -1,3 +1,7 @@
+/**
+ * @description 解析csv文件
+ */
+
 import { _decorator } from "cc";
 
 const { ccclass, property } = _decorator;
@@ -431,6 +435,13 @@ export class CSVManager {
     private _tableCast:any = {};
     private _tableComment:any = {};
 
+    /**
+     * 解析数据
+     * @param tableName 表名
+     * @param tableContent 表的内容
+     * @param force 表中如果有同名字段，是否强制替换
+     * @returns 
+     */
     addTable (tableName:string, tableContent:string, force?:boolean) {
         if (this._csvTables[tableName] && !force) {
             return;
@@ -439,11 +450,12 @@ export class CSVManager {
         let tableData: any = {};
         let tableArr: any[] = [];
         let opts = { header: true };
+        //CSV独立模块，解析数据，解析成一条一条的数据
         CSV.parse(tableContent, opts, function (row: any, keyName: string) {
             tableData[row[keyName]] = row;
             tableArr.push(row);
         });
-
+        //两种方式获取表数据，object/array
         this._tableCast[tableName] = (CSV as any).opts.cast;
         this._tableComment[tableName] = (CSV as any).opts.comment;
 
